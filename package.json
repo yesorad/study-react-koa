@@ -1,0 +1,15 @@
+{
+  "name": "blog-react-koa",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/yesorad/blog-react-koa.git",
+  "author": "kim eung gil <yesroad.dev@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "eslint-config-prettier": "^6.12.0",
+    "koa": "^2.13.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.10.0"
+  }
+}
