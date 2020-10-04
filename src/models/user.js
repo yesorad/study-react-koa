@@ -33,14 +33,14 @@ UserSchema.methods.serialize = function () {
 };
 
 // JWT를 사용하여 토큰 발급
-UserSchema.methods.generateTocken = function () {
+UserSchema.methods.generateToken = function () {
   // 첫번째 파라미터에는 토큰 안에 집어넣고 싶은 데이터를 넣는다.
   const token = jwt.sign(
     {
       _id: this.id,
-      usename: this.username,
+      username: this.username,
     },
-    process.JWT_SECRET, // 두번째 파라미터에는 JWT 암호를 넣는다.
+    process.env.JWT_SECRET, // 두번째 파라미터에는 JWT 암호를 넣는다.
     {
       expiresIn: '7d', // 7일 동안 유효함
     },
