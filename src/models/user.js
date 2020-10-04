@@ -1,5 +1,7 @@
-import mongosse, { Schema } from 'mongoose';
+import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
+
+const { Schema } = mongoose;
 
 const UserSchema = new Schema({
   username: String,
@@ -19,9 +21,16 @@ UserSchema.methods.checkPassword = async function (password) {
 
 // 스태틱 메서드
 UserSchema.statics.findByUsername = function (username) {
-  return this.findeOn({ username });
+  return this.findOne({ username });
 };
 
-const User = mongosse.model('User', UserSchema);
+// 입력할 데이터에서 hashedPassword 필드 제거하는 함수
+UserSchema.methods.serialize = function () {
+  const data = this.toJSON();
+  delete data.hashedPassword;
+  return data;
+};
+
+const User = mongoose.model('User', UserSchema);
 
 export default User;
