@@ -4,10 +4,29 @@ import Joi from 'Joi';
 
 const { ObjectId } = mongoose.Types;
 
-export const checkObjectId = (ctx, next) => {
+export const getPostById = async (ctx, next) => {
   const { id } = ctx.params;
   if (!ObjectId.isValid(id)) {
     ctx.status = 400;
+    return;
+  }
+  try {
+    const post = await Post.findById(id);
+    if (!post) {
+      ctx.status = 404;
+      return;
+    }
+    ctx.state.post = post;
+    return next();
+  } catch (e) {
+    ctx.htrow(500, e);
+  }
+};
+
+export const checkOwnPost = (ctx, next) => {
+  const { user, post } = ctx.state;
+  if (post.user._id.toString() !== user._id) {
+    ctx.status = 403;
     return;
   }
   return next();
@@ -43,6 +62,7 @@ export const write = async (ctx) => {
     title,
     body,
     tags,
+    user: ctx.state.user,
   });
   try {
     // save() 를 실행해야 db에 저장됨
@@ -55,7 +75,7 @@ export const write = async (ctx) => {
 
 /*
   포스트 목록 조회
-  GET /api/posts
+  GET /api/posts?username=&tag=&page=
 */
 export const list = async (ctx) => {
   const page = parseInt(ctx.query.page || '1', 10);
@@ -64,16 +84,23 @@ export const list = async (ctx) => {
     return;
   }
 
+  // username , tag 값이 유효하면 추가
+  const { tag, username } = ctx.query;
+  const query = {
+    ...(username ? { 'user.username': username } : {}),
+    ...(tag ? { tags: tag } : {}),
+  };
+
   try {
     // 조회시 find()를 사용
-    const posts = await Post.find()
+    const posts = await Post.find(query)
       .sort({ _id: -1 })
       .limit(10)
       .skip((page - 1) * 10)
       .lean()
       .exec();
     // 마지막 페이지 카운트 표시
-    const postCount = await Post.countDocuments().exec();
+    const postCount = await Post.countDocuments(query).exec();
     ctx.set('Last-Page', Math.ceil(postCount / 10));
     // 내용 길이 제한
     ctx.body = posts.map((post) => ({
@@ -90,18 +117,7 @@ export const list = async (ctx) => {
   GET /api/posts
 */
 export const read = async (ctx) => {
-  const { id } = ctx.params;
-  try {
-    // 특정 포스트 조회시 find()를 사용
-    const post = await Post.findById(id).exec();
-    if (!post) {
-      ctx.status = 404;
-      return;
-    }
-    ctx.body = post;
-  } catch (e) {
-    ctx.throw(500, e);
-  }
+  ctx.body = ctx.state.post;
 };
 
 /*
