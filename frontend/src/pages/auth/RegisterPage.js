@@ -1,7 +1,15 @@
 import React from 'react';
+import AuthTemplate from '../../components/auth/AuthTemplate';
+import RegisterContainer from '../../containers/auth/RegisterContainer';
 
 function RegisterPage() {
-  return <div>회원가입</div>;
+  return (
+    <>
+      <AuthTemplate>
+        <RegisterContainer />
+      </AuthTemplate>
+    </>
+  );
 }
 
 export default RegisterPage;

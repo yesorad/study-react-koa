@@ -1,14 +1,41 @@
 import { createAction, handleActions } from 'redux-actions';
 
-const SAMPLE_ACTION = 'auth/SAMPLE_ACTION';
+const CHANGE_FIELD = 'auth/CHANGE_FIELD';
+const INITIALIZE_FORM = 'auth/INITIALIZE_FORM';
 
-export const sampleAction = createAction(SAMPLE_ACTION);
+export const changeFiled = createAction(
+  CHANGE_FIELD,
+  ({ form, key, value }) => ({
+    form, // register, login
+    key, // username, password, passwordConfirm
+    value, // 실제 바꾸려는 값
+  }),
+);
 
-const initialState = {};
+export const initializeForm = createAction(INITIALIZE_FORM, (form) => form);
+
+const initialState = {
+  register: {
+    username: '',
+    password: '',
+    passwordConfirm: '',
+  },
+  login: {
+    username: '',
+    password: '',
+  },
+};
 
 const auth = handleActions(
   {
-    [SAMPLE_ACTION]: (state, action) => state,
+    [CHANGE_FIELD]: (state, { payload: { form, key, value } }) => ({
+      ...state,
+      auth: (state[form][key] = value),
+    }),
+    [INITIALIZE_FORM]: (state, { payload: form }) => ({
+      ...state,
+      auth: initialState[form],
+    }),
   },
   initialState,
 );
