@@ -1,10 +1,18 @@
 import React from 'react';
-import Button from '../../components/common/Button';
+import HeaderContainer from '../../containers/common/HeaderContainer';
+import PaginationContainer from '../../containers/post/PaginationContainer';
+import PostListContainer from '../../containers/post/PostListContainer';
+import { Helmet } from 'react-helmet-async';
 
 function PostListPage() {
   return (
     <>
-      <Button>버튼</Button>
+      <Helmet>
+        <title>BLOG-LIST</title>
+      </Helmet>
+      <HeaderContainer />
+      <PostListContainer />
+      <PaginationContainer />
     </>
   );
 }
