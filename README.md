@@ -1,4 +1,4 @@
-# React Setting
+# Study-react-koa
 
 ## Stack
 ```
